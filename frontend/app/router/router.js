@@ -17,6 +17,9 @@ import MainControls from '../components/MainControls.vue'
 import AugurHeader from '../components/AugurHeader.vue'
 import Tabs from '../components/Tabs.vue'
 import TableView from '../components/TableView.vue'
+//import card that shows everything (ALL USE CASES)
+import ScoreCard from '../components/ScoreCard'
+
 
 let routes = [
         {path: '/', component: AugurCards,
@@ -37,6 +40,17 @@ let routes = [
       }, 
       {path: '/single/:owner?/:repo', name: 'single', props: true, canReuse: false, component: AugurCards,
         children: [
+          //define route for card when viewing a single repo (ALL USE CASES)
+          {
+            path: "score",
+            name: "score",
+            components: {
+              header: AugurHeader,
+              tabs: Tabs,
+              controls: MainControls,
+              content: ScoreCard
+            }
+          },
           {
             path: "gmd",
             name: "gmd",
@@ -122,6 +136,17 @@ let routes = [
       // {path: '/:tab/:domain/:owner/:repo/comparedto/:comparedowner/:comparedrepo', component: AugurCards, name: 'gitsinglecompare'},
       {path: '/compare/:owner?/:repo/comparedto/:comparedowner/:comparedrepo', component: AugurCards, name: 'singlecompare', props: true, canReuse: false,
         children: [
+          //define route for card when viewing 2 repos (ALL USE CASES)
+          {
+            path: "score",
+            name: "score",
+            components: {
+              header: AugurHeader,
+              tabs: Tabs,
+              controls: MainControls,
+              content: ScoreCard
+            }
+          },
           {
             path: "gmd",
             name: "gmdcompare",
@@ -196,6 +221,17 @@ let routes = [
       },
       {path: '/groupcompare/:groupid', component: AugurCards, name: 'group', props: true, canReuse: false,
         children: [
+          //define route for card when viewing a group of repos (ALL USE CASES)
+          {
+            path: "score",
+            name: "score",
+            components: {
+              header: AugurHeader,
+              tabs: Tabs,
+              controls: MainControls,
+              content: ScoreCard
+            }
+          },
           {
             path: "gmd",
             name: "gmdgroup",
@@ -286,13 +322,6 @@ window.AugurAPI.getDownloadedGitRepos().then((data) => {
   projects = Object.keys(repos)
 
 })
-// const routes = routerOptions.map(route => {
-//   // let route1 = Object.assign({}, route);
-//   return {
-//     route,
-//     component: () => require(`@/components/${route.component}.vue`)
-//   }
-// })
 
 
 export default new Router({

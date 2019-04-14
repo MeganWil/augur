@@ -9,7 +9,8 @@
           <li :class="{ active: (currentTab == 'experimental') }"><a href="#" @click="changeTab" data-value="experimental">Experimental</a></li>  
           <li :class="{ active: (currentTab == 'git'), hidden: !gitRepo }"><a href="#" @click="changeTab" data-value="git">Git</a></li>
           <li :class="{ active: (currentTab == 'overview'), hidden: !gitRepo }"><a href="#" @click="changeTab" data-value="overview">Overview</a></li>
-          <!-- <li :class="{ active: (currentTab == 'git'), hidden: !gitRepo }"><a href="#" @click="changeTab" data-value="git">Git</a></li> -->
+          <!--added new tab here (ALL USE CASES)-->
+          <li :class="{ active: (currentTab == 'score') }"><a href="#" @click="changeTab" data-value="score">Score</a></li>  
         </ul>
       </nav>
 </template>
