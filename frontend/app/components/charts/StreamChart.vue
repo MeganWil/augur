@@ -1,8 +1,10 @@
 <template>
   <div ref="holder" style="position: relative; z-index: 5">
     <div class="tickchart">
-      <h3 style="text-align: center">{{ title }}</h3>
-      <p style="text-align: center"> chart will go here </p>
+      <h3 style="text-align: center">Lines of code added by the top 10 authors visualized</h3>
+      <vega-lite :spec="spec" :data="values"></vega-lite>
+      <p> {{ chart }} </p>
+
     </div>
   </div>
 </template>
@@ -86,54 +88,23 @@ export default {
         "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
         "width": 950,
         "height": 300,
-        "config": {
-          "tick": {
-            "thickness": 8,
-            "bandSize": 23
+      
+        "data": {"url": "https://vega.github.io/vega-lite/data/unemployment-across-industries.json"},
+        "mark": "area",
+        "encoding": {
+          "x": {
+            "timeUnit": "yearmonth", "field": "date", "type": "temporal",
+            "axis": {"domain": false, "format": "%Y", "tickSize": 0}
           },
-          "axis":{
-                "grid": false,
-                "title": null
-              },
-              "legend": {
-               // "offset": -505,
-                "titleFontSize": 10,
-                "titlePadding": 10
-              },"scale": {"minSize": 100, "maxSize": 500}
-        },
-        "layer": [
-          {
-            "transform": [
-             
-              {
-                "calculate": "(datum.additions > datum.deletions) ? 'more deletions' : 'more additions'",
-                "as": "Majority type of changes"
-              },
-              {
-                "calculate": "(datum.additions - datum.deletions)",
-                "as": "Net lines added"
-              },
-              {
-                "calculate": "(datum.additions + datum.deletions) < 50000 ? 50000 : ((datum.additions + datum.deletions) > 1000000 ? 1000000 : (datum.additions + datum.deletions))",
-                "as": "Total lines changed"
-              },
-            ],
-            "mark": type,
-            "encoding": {
-              "x": {"field": "author_date", "type": "temporal", "bin": bin, "axis": {"format": "%b %Y", "title": " "}},
-              "y": {"field": "author_email", "type": "nominal"},
-              "color": {
-                "field": "Net lines added",
-                "type": "quantitative",
-                "scale": { "range": ["#FF0000", "#00FF00"]}
-              },
-              "size": size,
-              "opacity": opacity
+          "y": {
+            "aggregate": "sum", "field": "count","type": "quantitative",
+            "axis": null,
+            "stack": "center"
+          },
+          "color": {"field":"series", "type":"nominal", "scale":{"scheme": "category20b"}}
+        }
+        
 
-            },
-            
-          }
-        ]
         
       }
 

@@ -13,16 +13,13 @@
           <stream-chart title="Overall Score Over Time"></stream-chart>
         </div>
         <div class="col col-3">
-          <relative-line-chart title="Growth, Maturity, and Decline" group="gmd"></relative-line-chart>
+          <relative-line-chart title="Code Development" group="code"></relative-line-chart>
         </div>
         <div class="col col-3">
-          <relative-line-chart title="Diversity and Inclusion" group="diversityinclusion"></relative-line-chart>
+          <relative-line-chart title="Issue Resolution" group="issue"></relative-line-chart>
         </div>
         <div class="col col-3">
-          <relative-line-chart title="Value" group="value"></relative-line-chart>
-        </div>
-        <div class="col col-3">
-          <relative-line-chart title="Risk" group="risk"></relative-line-chart>
+          <relative-line-chart title="Community Growth" group="growth"></relative-line-chart>
         </div>
       </div>
     </div>

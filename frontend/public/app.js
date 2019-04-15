@@ -2223,7 +2223,7 @@ module.exports = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('section',[_c('div',{staticStyle:{"display":"inline-block"}},[_c('h2',{staticStyle:{"display":"inline-block","color":"black !important","margin-bottom":"20px"}},[_vm._v(_vm._s(_vm.$store.state.gitRepo))]),_vm._v(" "),(_vm.$store.state.comparedRepos.length > 0)?_c('h2',{staticClass:"repolisting",staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_vm._v(" compared to: ")]):_vm._e(),_vm._v(" "),_vm._l((_vm.$store.state.comparedRepos),function(repo,index){return _c('h2',{staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_c('span',{staticClass:"repolisting",style:({ 'color': _vm.colors[index] })},[_vm._v(" "+_vm._s(repo)+" ")])])})],2),_vm._v(" "),_c('div',{staticClass:"row"},[_c('div',{staticClass:"col col-12"},[_c('stream-chart',{attrs:{"title":"Overall Score Over Time"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Growth, Maturity, and Decline","group":"gmd"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Diversity and Inclusion","group":"diversityinclusion"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Value","group":"value"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Risk","group":"risk"}})],1)])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('section',[_c('div',{staticStyle:{"display":"inline-block"}},[_c('h2',{staticStyle:{"display":"inline-block","color":"black !important","margin-bottom":"20px"}},[_vm._v(_vm._s(_vm.$store.state.gitRepo))]),_vm._v(" "),(_vm.$store.state.comparedRepos.length > 0)?_c('h2',{staticClass:"repolisting",staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_vm._v(" compared to: ")]):_vm._e(),_vm._v(" "),_vm._l((_vm.$store.state.comparedRepos),function(repo,index){return _c('h2',{staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_c('span',{staticClass:"repolisting",style:({ 'color': _vm.colors[index] })},[_vm._v(" "+_vm._s(repo)+" ")])])})],2),_vm._v(" "),_c('div',{staticClass:"row"},[_c('div',{staticClass:"col col-12"},[_c('stream-chart',{attrs:{"title":"Overall Score Over Time"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Code Development","group":"code"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Issue Resolution","group":"issue"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Community Growth","group":"growth"}})],1)])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -2232,7 +2232,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-f88e23b6", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-f88e23b6", __vue__options__)
+    hotAPI.reload("data-v-f88e23b6", __vue__options__)
   }
 })()}
 });
@@ -2456,7 +2456,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-004f2c6b", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-004f2c6b", __vue__options__)
+    hotAPI.reload("data-v-004f2c6b", __vue__options__)
   }
 })()}
 });
@@ -5573,48 +5573,46 @@ exports.default = {
       }
 
       var config = {
-        "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
-        "width": 950,
-        "height": 300,
-        "config": {
-          "tick": {
-            "thickness": 8,
-            "bandSize": 23
-          },
-          "axis": {
-            "grid": false,
-            "title": null
-          },
-          "legend": {
-            "titleFontSize": 10,
-            "titlePadding": 10
-          }, "scale": { "minSize": 100, "maxSize": 500 }
-        },
+        "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+        "description": "Summarized and per year weather information for Seatle and New York.",
+        "data": { "url": "https://vega.github.io/vega-lite/data/weather.csv" },
+
         "layer": [{
-          "transform": [{
-            "calculate": "(datum.additions > datum.deletions) ? 'more deletions' : 'more additions'",
-            "as": "Majority type of changes"
-          }, {
-            "calculate": "(datum.additions - datum.deletions)",
-            "as": "Net lines added"
-          }, {
-            "calculate": "(datum.additions + datum.deletions) < 50000 ? 50000 : ((datum.additions + datum.deletions) > 1000000 ? 1000000 : (datum.additions + datum.deletions))",
-            "as": "Total lines changed"
-          }],
-          "mark": type,
+          "mark": "line",
           "encoding": {
-            "x": { "field": "author_date", "type": "temporal", "bin": bin, "axis": { "format": "%b %Y", "title": " " } },
-            "y": { "field": "author_email", "type": "nominal" },
-            "color": {
-              "field": "Net lines added",
-              "type": "quantitative",
-              "scale": { "range": ["#FF0000", "#00FF00"] }
+            "y": {
+              "aggregate": "mean",
+              "field": "wind",
+              "type": "quantitative"
             },
-            "size": size,
-            "opacity": opacity
-
+            "x": {
+              "timeUnit": "month",
+              "field": "date",
+              "type": "ordinal"
+            },
+            "detail": {
+              "timeUnit": "year",
+              "type": "temporal",
+              "field": "date"
+            },
+            "color": { "type": "nominal", "field": "location" },
+            "opacity": { "value": 0.2 }
           }
-
+        }, {
+          "mark": "line",
+          "encoding": {
+            "y": {
+              "aggregate": "mean",
+              "field": "wind",
+              "type": "quantitative"
+            },
+            "x": {
+              "timeUnit": "month",
+              "field": "date",
+              "type": "ordinal"
+            },
+            "color": { "type": "nominal", "field": "location" }
+          }
         }]
 
       };
@@ -5721,7 +5719,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('p',{staticStyle:{"text-align":"center"}},[_vm._v(" chart will go here ")])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('vega-lite',{attrs:{"spec":_vm.spec,"data":_vm.values}}),_vm._v(" "),_c('p',{staticStyle:{"text-align":"center"}},[_vm._v(" "+_vm._s(_vm.chart))])],1)])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -5730,7 +5728,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-2d5e6cd1", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-2d5e6cd1", __vue__options__)
+    hotAPI.reload("data-v-2d5e6cd1", __vue__options__)
   }
 })()}
 });
@@ -5990,46 +5988,21 @@ exports.default = {
         "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
         "width": 950,
         "height": 300,
-        "config": {
-          "tick": {
-            "thickness": 8,
-            "bandSize": 23
-          },
-          "axis": {
-            "grid": false,
-            "title": null
-          },
-          "legend": {
-            "titleFontSize": 10,
-            "titlePadding": 10
-          }, "scale": { "minSize": 100, "maxSize": 500 }
-        },
-        "layer": [{
-          "transform": [{
-            "calculate": "(datum.additions > datum.deletions) ? 'more deletions' : 'more additions'",
-            "as": "Majority type of changes"
-          }, {
-            "calculate": "(datum.additions - datum.deletions)",
-            "as": "Net lines added"
-          }, {
-            "calculate": "(datum.additions + datum.deletions) < 50000 ? 50000 : ((datum.additions + datum.deletions) > 1000000 ? 1000000 : (datum.additions + datum.deletions))",
-            "as": "Total lines changed"
-          }],
-          "mark": type,
-          "encoding": {
-            "x": { "field": "author_date", "type": "temporal", "bin": bin, "axis": { "format": "%b %Y", "title": " " } },
-            "y": { "field": "author_email", "type": "nominal" },
-            "color": {
-              "field": "Net lines added",
-              "type": "quantitative",
-              "scale": { "range": ["#FF0000", "#00FF00"] }
-            },
-            "size": size,
-            "opacity": opacity
 
-          }
-
-        }]
+        "data": { "url": "https://vega.github.io/vega-lite/data/unemployment-across-industries.json" },
+        "mark": "area",
+        "encoding": {
+          "x": {
+            "timeUnit": "yearmonth", "field": "date", "type": "temporal",
+            "axis": { "domain": false, "format": "%Y", "tickSize": 0 }
+          },
+          "y": {
+            "aggregate": "sum", "field": "count", "type": "quantitative",
+            "axis": null,
+            "stack": "center"
+          },
+          "color": { "field": "series", "type": "nominal", "scale": { "scheme": "category20b" } }
+        }
 
       };
 
@@ -6133,7 +6106,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{staticClass:"tickchart"},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('p',{staticStyle:{"text-align":"center"}},[_vm._v(" chart will go here ")])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{staticClass:"tickchart"},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v("Lines of code added by the top 10 authors visualized")]),_vm._v(" "),_c('vega-lite',{attrs:{"spec":_vm.spec,"data":_vm.values}}),_vm._v(" "),_c('p',[_vm._v(" "+_vm._s(_vm.chart)+" ")])],1)])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -6142,7 +6115,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-3dd30a71", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-3dd30a71", __vue__options__)
+    hotAPI.reload("data-v-3dd30a71", __vue__options__)
   }
 })()}
 });

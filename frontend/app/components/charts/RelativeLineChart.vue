@@ -2,7 +2,8 @@
   <div ref="holder" style="position: relative; z-index: 5">
     <div class="">
       <h3 style="text-align: center">{{ title }}</h3>
-      <p style="text-align: center"> chart will go here </p>
+      <vega-lite :spec="spec" :data="values"></vega-lite>
+      <p style="text-align: center"> {{ chart }}</p>
     </div>
   </div>
 </template>
@@ -83,59 +84,52 @@ export default {
 
 
       let config = {
-        "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
-        "width": 950,
-        "height": 300,
-        "config": {
-          "tick": {
-            "thickness": 8,
-            "bandSize": 23
-          },
-          "axis":{
-                "grid": false,
-                "title": null
-              },
-              "legend": {
-               // "offset": -505,
-                "titleFontSize": 10,
-                "titlePadding": 10
-              },"scale": {"minSize": 100, "maxSize": 500}
-        },
-        "layer": [
-          {
-            "transform": [
-             
-              {
-                "calculate": "(datum.additions > datum.deletions) ? 'more deletions' : 'more additions'",
-                "as": "Majority type of changes"
-              },
-              {
-                "calculate": "(datum.additions - datum.deletions)",
-                "as": "Net lines added"
-              },
-              {
-                "calculate": "(datum.additions + datum.deletions) < 50000 ? 50000 : ((datum.additions + datum.deletions) > 1000000 ? 1000000 : (datum.additions + datum.deletions))",
-                "as": "Total lines changed"
-              },
-            ],
-            "mark": type,
-            "encoding": {
-              "x": {"field": "author_date", "type": "temporal", "bin": bin, "axis": {"format": "%b %Y", "title": " "}},
-              "y": {"field": "author_email", "type": "nominal"},
-              "color": {
-                "field": "Net lines added",
-                "type": "quantitative",
-                "scale": { "range": ["#FF0000", "#00FF00"]}
-              },
-              "size": size,
-              "opacity": opacity
+  "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+  "description": "Summarized and per year weather information for Seatle and New York.",
+  "data": {"url": "https://vega.github.io/vega-lite/data/weather.csv"},
 
-            },
-            
-          }
-        ]
-        
+    "layer": [
+      {
+        "mark": "line",
+        "encoding": {
+          "y": {
+            "aggregate": "mean",
+            "field": "wind",
+            "type": "quantitative"
+          },
+          "x": {
+            "timeUnit": "month",
+            "field": "date",
+            "type": "ordinal"
+          },
+          "detail": {
+            "timeUnit": "year",
+            "type": "temporal",
+            "field": "date"
+          },
+          "color": {"type": "nominal","field": "location"},
+          "opacity": {"value": 0.2}
+        }
+      },
+      {
+        "mark": "line",
+        "encoding": {
+          "y": {
+            "aggregate": "mean",
+            "field": "wind",
+            "type": "quantitative"
+          },
+          "x": {
+            "timeUnit": "month",
+            "field": "date",
+            "type": "ordinal"
+          },
+          "color": {"type": "nominal","field": "location"}
+        }
       }
+    ]
+
+}
 
       let repo = window.AugurAPI.Repo({ gitURL: this.repo })
       let contributors = {}
