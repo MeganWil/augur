@@ -52,10 +52,10 @@ We want the Augur project to be a lot more user friendly and easier to navigate.
 
 ### ERD
 1. GHTorrent
-![ERD](./images/ERD.jpg)
+![ERD](images/ERD.jpg)
 
 2. Facade
-![ERD](./images/ERD2.jpg)
+![ERD](images/ERD2.jpg)
 
 
 ### DDL
