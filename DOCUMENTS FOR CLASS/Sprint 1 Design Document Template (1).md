@@ -1,3 +1,5 @@
+[Link to your deployment environment](http://ec2-18-221-143-177.us-east-2.compute.amazonaws.com/)
+
 ## Functional Requirements
 
 1. Individual contributor inspecting their impact on a repo’s score
@@ -52,10 +54,10 @@ We want the Augur project to be a lot more user friendly and easier to navigate.
 
 ### ERD
 1. GHTorrent
-![ERD](images/ERD.jpg)
+![ERD](images/image2.jpg)
 
 2. Facade
-![ERD](images/ERD2.jpg)
+![ERD](images/image1.jpg)
 
 
 ### DDL
