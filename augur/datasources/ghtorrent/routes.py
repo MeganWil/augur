@@ -9,6 +9,16 @@ def create_routes(server):
 
     ghtorrent = server._augur['ghtorrent']()
 
+    @server.app.route('/{}/<owner>/<repo>/code_development'.format(server.api_version))
+    def code_development(owner, repo):
+        repoid = ghtorrent.repoid(owner, repo)
+        max = request.args.get('max')
+        transformed_code_development = server.transform(ghtorrent.code_development, args=(owner, repo), kwargs=({'max': max}))
+        return Response(response=transformed_code_development,
+                        status=200,
+                        mimetype="application/json")
+    server.updateMetricMetadata(ghtorrent.code_development, '/api/unstable/<owner>/<repo>/timeseries/code_development')
+
     #####################################
     ###    DIVERSITY AND INCLUSION    ###
     #####################################

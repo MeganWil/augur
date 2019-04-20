@@ -29,6 +29,20 @@ class GHTorrent(object):
         except Exception as e:
             logger.error("Could not connect to GHTorrent database. Error: " + str(e))
 
+    @annotate(tag='code-development')
+    def code_development(self, owner, repo=None, max=None):
+        if max is None:
+            repoid = self.repoid(owner, repo)
+        else:
+            repoid = max
+        commitsSQL = s.sql.text(self.__single_table_count_by_date('commits'))
+        df = pd.read_sql(commitsSQL, self.db, params={"repoid": str(repoid)})
+        df1 = self.closed_issues(owner, repo)
+        df2 = self.pull_requests_made_closed(owner, repo)
+        df["issues_closed"] = df1["issues_closed"]
+        df["pull_request_rate"] = df2["rate"]
+        return df
+
     def __single_table_count_by_date(self, table, repo_col='project_id', user_col='author_id', group_by="week"):
         """
         Generates query string to count occurances of rows per date for a given table.
