@@ -5,7 +5,7 @@ Creates routes for the GHTorrent data source plugin
 
 from flask import request, Response
 
-def create_routes(server):  
+def create_routes(server):
 
     ghtorrent = server._augur['ghtorrent']()
 
@@ -18,6 +18,17 @@ def create_routes(server):
                         status=200,
                         mimetype="application/json")
     server.updateMetricMetadata(ghtorrent.code_development, '/api/unstable/<owner>/<repo>/timeseries/code_development')
+
+    @server.app.route('/{}/<owner>/<repo>/issue_resolution'.format(server.api_version))
+    def issue_resolution(owner, repo):
+        repoid = ghtorrent.repoid(owner, repo)
+        max = request.args.get('max')
+        transformed_issue_resolution = server.transform(ghtorrent.issue_resolution, args=(owner, repo), kwargs=({'max': max}))
+        return Response(response=transformed_issue_resolution,
+                        status=200,
+                        mimetype="application/json")
+    server.updateMetricMetadata(ghtorrent.issue_resolution, '/api/unstable/<owner>/<repo>/timeseries/issue_resolution')
+
 
     #####################################
     ###    DIVERSITY AND INCLUSION    ###

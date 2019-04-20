@@ -1,6 +1,6 @@
 #SPDX-License-Identifier: MIT
 """
-Data source that uses the GHTorrent relational database of GitHub activity. 
+Data source that uses the GHTorrent relational database of GitHub activity.
 """
 
 import pandas as pd
@@ -29,12 +29,16 @@ class GHTorrent(object):
         except Exception as e:
             logger.error("Could not connect to GHTorrent database. Error: " + str(e))
 
+
+
+    # FIRST 'METRIC' - CODE DEVELOPMENT
     @annotate(tag='code-development')
     def code_development(self, owner, repo=None, max=None):
         if max is None:
             repoid = self.repoid(owner, repo)
         else:
             repoid = max
+        # returns number of commits per week
         commitsSQL = s.sql.text(self.__single_table_count_by_date('commits'))
         df = pd.read_sql(commitsSQL, self.db, params={"repoid": str(repoid)})
         df1 = self.closed_issues(owner, repo)
@@ -42,6 +46,26 @@ class GHTorrent(object):
         df["issues_closed"] = df1["issues_closed"]
         df["pull_request_rate"] = df2["rate"]
         return df
+
+    @annotate(tag='issue-resolution')
+    def issue_resolution(self, owner, repo=None, max=None):
+        df = self.issue_comments(owner, repo)
+        df1 = self.commit_comments(owner, repo)
+        df2 = self.pull_request_comments(owner, repo)
+        df3 = self.first_response_to_issue_duration(owner, repo)
+        df['commit_comments'] = df1['commit_comments']
+        df['pull_request_comments'] = df2['pull_request_comments']
+        df['first_response_to_issue_duration'] = df3['minutes_to_comment']
+        return df
+
+    # @annotate(tag='community-growth')
+    # def community_growth(self, owner, repo=None, max=None):
+    #     df = self.community_age(owner, repo)
+    #     df1 = self.pull_requests_open(owner, repo)
+    #     df2 = self
+
+
+
 
     def __single_table_count_by_date(self, table, repo_col='project_id', user_col='author_id', group_by="week"):
         """
@@ -178,7 +202,7 @@ class GHTorrent(object):
         return pd.read_sql(issuesClosedSQL, self.db, params={"repoid": str(repoid)})
 
     @annotate(tag='code-commits')
-    def code_commits(self, owner, repo=None, group_by="week"):        
+    def code_commits(self, owner, repo=None, group_by="week"):
         """
         Timeseries of the count of commits
 
@@ -334,9 +358,9 @@ class GHTorrent(object):
         return rs
 
     @annotate(tag='forks')
-    def forks(self, owner, repo=None, group_by="week"): 
+    def forks(self, owner, repo=None, group_by="week"):
         """
-        
+
         Timeseries of when a repo's forks were created
 
         :param owner: The name of the project owner or the id of the project in the projects table of the project in the projects table. Use repoid() to get this.
@@ -1042,7 +1066,7 @@ class GHTorrent(object):
         return pd.read_sql(contributorsSQL, self.db, params={"repoid": str(repoid)})
 
     @annotate(tag='new-watchers')
-    def new_watchers(self, owner, repo=None): 
+    def new_watchers(self, owner, repo=None):
         """
         Timeseries of new watchers per week
 
