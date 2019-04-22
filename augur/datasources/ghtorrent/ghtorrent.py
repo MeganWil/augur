@@ -58,11 +58,13 @@ class GHTorrent(object):
         df['first_response_to_issue_duration'] = df3['minutes_to_comment']
         return df
 
-    # @annotate(tag='community-growth')
-    # def community_growth(self, owner, repo=None, max=None):
-    #     df = self.community_age(owner, repo)
-    #     df1 = self.pull_requests_open(owner, repo)
-    #     df2 = self
+    @annotate(tag='community-growth')
+    def community_growth(self, owner, repo=None, max=None):
+        # method community_age currently broken?
+        df = self.pull_requests_open(owner, repo)
+        # df1 = self.community_age(owner, repo)
+        # df[''] = df1['']
+        return df 
 
 
 

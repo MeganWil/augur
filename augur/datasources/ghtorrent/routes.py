@@ -29,6 +29,16 @@ def create_routes(server):
                         mimetype="application/json")
     server.updateMetricMetadata(ghtorrent.issue_resolution, '/api/unstable/<owner>/<repo>/timeseries/issue_resolution')
 
+    @server.app.route('/{}/<owner>/<repo>/community_growth'.format(server.api_version))
+    def community_growth(owner, repo):
+        repoid = ghtorrent.repoid(owner, repo)
+        max = request.args.get('max')
+        transformed_community_growth = server.transform(ghtorrent.community_growth, args=(owner, repo), kwargs=({'max': max}))
+        return Response(response=transformed_community_growth,
+                        status=200,
+                        mimetype="application/json")
+    server.updateMetricMetadata(ghtorrent.community_growth, '/api/unstable/<owner>/<repo>/timeseries/community_growth')
+
 
     #####################################
     ###    DIVERSITY AND INCLUSION    ###
