@@ -40,11 +40,12 @@ class GHTorrent(object):
             repoid = max
         # returns number of commits per week
         commitsSQL = s.sql.text(self.__single_table_count_by_date('commits'))
-        df = pd.read_sql(commitsSQL, self.db, params={"repoid": str(repoid)})
-        df1 = self.closed_issues(owner, repo)
-        df2 = self.pull_requests_made_closed(owner, repo)
-        df["issues_closed"] = df1["issues_closed"]
-        df["pull_request_rate"] = df2["rate"]
+        df1 = pd.read_sql(commitsSQL, self.db, params={"repoid": str(repoid)})
+        df2 = self.closed_issues(owner, repo)
+        df3 = self.pull_requests_made_closed(owner, repo)
+        df = pd.DataFrame({'date': df1['date'], 'commits': df1['commits'], 'issues_closed': None, 'pull_request_rate': None})
+        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'commits': None, 'issues_closed': df2['issues_closed'], 'pull_request_rate': None})])
+        df = pd.concat([df, pd.DataFrame({'date': df3['date'], 'commits': None, 'issues_closed': None, 'pull_request_rate': df3['rate']})])
         return df
 
     @annotate(tag='issue-resolution')

@@ -9,11 +9,7 @@
       </h2>
     </div>
 
-      <div class="row">
-
-      <!-- <div class="col col-12">
-        <dual-axis-contributions></dual-axis-contributions>
-      </div> -->
+    <div class="row">
 
       <div class="col col-6">
         <dynamic-line-chart source="commitComments"

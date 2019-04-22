@@ -762,6 +762,8 @@ var AugurAPI = function () {
         Timeseries(repo, 'majorTags', 'tags/major');
         Timeseries(repo, 'newWatchers', 'new_watchers');
         Timeseries(repo, 'tags', 'tags');
+
+        Endpoint(repo, 'codeDevelopment', 'code_development');
       }
 
       if (repo.gitURL) {
@@ -2210,20 +2212,57 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 module.exports = {
   data: function data() {
     return {
-      colors: ["#FF3647", "#4736FF", "#3cb44b", "#ffe119", "#f58231", "#911eb4", "#42d4f4", "#f032e6"]
+      values: {},
+      colors: ["#FF3647", "#4736FF", "#3cb44b", "#ffe119", "#f58231", "#911eb4", "#42d4f4", "#f032e6"],
+      loaded: false
     };
   },
 
+  computed: {
+    repo: function repo() {
+      return this.$store.state.baseRepo;
+    }
+  },
   components: {
     StreamChart: _StreamChart2.default,
     RelativeLineChart: _RelativeLineChart2.default
+  },
+  created: function created() {
+    var _this = this;
+
+    var repo = window.AugurAPI.Repo({ githubURL: this.repo });
+    repo.codeDevelopment().then(function (data) {
+      console.log("HERE", data);
+      _this.values['codeDevelopment'] = _this.convertKey(data, 'codeDevelopment');
+      console.log("HERE", data);
+      _this.loaded = true;
+    });
+  },
+
+  methods: {
+    convertKey: function convertKey(ary, group) {
+      ary.forEach(function (el) {
+        el['group'] = group;
+        var keys = Object.keys(el);
+        var field = null;
+        keys.forEach(function (key) {
+          if (el[key] != null && key != 'date') {
+            console.log(key);
+            field = key;
+          }
+        });
+        el['value'] = el[field];
+        el['field'] = field;
+      });
+      return ary;
+    }
   }
 };
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('section',[_c('div',{staticStyle:{"display":"inline-block"}},[_c('h2',{staticStyle:{"display":"inline-block","color":"black !important","margin-bottom":"20px"}},[_vm._v(_vm._s(_vm.$store.state.gitRepo))]),_vm._v(" "),(_vm.$store.state.comparedRepos.length > 0)?_c('h2',{staticClass:"repolisting",staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_vm._v(" compared to: ")]):_vm._e(),_vm._v(" "),_vm._l((_vm.$store.state.comparedRepos),function(repo,index){return _c('h2',{staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_c('span',{staticClass:"repolisting",style:({ 'color': _vm.colors[index] })},[_vm._v(" "+_vm._s(repo)+" ")])])})],2),_vm._v(" "),_c('div',{staticClass:"row"},[_c('div',{staticClass:"col col-12"},[_c('stream-chart',{attrs:{"title":"Overall Score Over Time"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Code Development","group":"code"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Issue Resolution","group":"issue"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Community Growth","group":"growth"}})],1)])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('section',[_c('div',{staticStyle:{"display":"inline-block"}},[_c('h2',{staticStyle:{"display":"inline-block","color":"black !important","margin-bottom":"20px"}},[_vm._v(_vm._s(_vm.$store.state.gitRepo))]),_vm._v(" "),(_vm.$store.state.comparedRepos.length > 0)?_c('h2',{staticClass:"repolisting",staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_vm._v(" compared to: ")]):_vm._e(),_vm._v(" "),_vm._l((_vm.$store.state.comparedRepos),function(repo,index){return _c('h2',{staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_c('span',{staticClass:"repolisting",style:({ 'color': _vm.colors[index] })},[_vm._v(" "+_vm._s(repo)+" ")])])})],2),_vm._v(" "),_c('div',{staticClass:"row"},[(_vm.loaded)?_c('div',{staticClass:"col col-12"},[_c('stream-chart',{attrs:{"title":"Overall Score Over Time","source":"codeDevelopment","data":_vm.values['codeDevelopment']}})],1):_vm._e(),_vm._v(" "),(_vm.loaded)?_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Code Development","group":"code","source":"codeDevelopment","data":_vm.values['codeDevelopment']}})],1):_vm._e(),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Issue Resolution","group":"issue","source":"codeDevelopment"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Community Growth","group":"growth","source":"codeDevelopment"}})],1)])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -5487,8 +5526,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _vuex = require('vuex');
 
 var _AugurStats = require('AugurStats');
@@ -5498,220 +5535,50 @@ var _AugurStats2 = _interopRequireDefault(_AugurStats);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
-  props: ['source', 'citeUrl', 'citeText', 'title', 'group', 'data'],
+  props: ['source', 'citeUrl', 'citeText', 'title', 'disableRollingAverage', 'alwaysByDate', 'data'],
   data: function data() {
-    var years = [];
-    for (var i = 9; i >= 0; i--) {
-      years.push(new Date().getFullYear() - i);
-    }
-    var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    var monthDecimals = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     return {
       values: [],
-      contributors: [],
-      organizations: [],
-      view: 'year',
-      monthNames: monthNames,
-      monthDecimals: monthDecimals,
-      years: years,
-      setYear: 0,
-      tick: 0
+      user: null
     };
-  },
-  created: function created() {
-    this.tick = 0;
   },
 
   computed: {
     repo: function repo() {
       return this.$store.state.baseRepo;
     },
-    earliest: function earliest() {
-      return this.$store.state.startDate;
-    },
-    latest: function latest() {
-      return this.$store.state.endDate;
-    },
     spec: function spec() {
-      var _this = this;
-
-      var type = null,
-          bin = null,
-          size = null,
-          opacity = null;
-
-      if (this.tick == 0) {
-        type = "circle";
-        bin = false;
-        size = {
-          "field": "Total lines changed",
-          "type": "quantitative",
-          "min": "15",
-          "scale": { "minSize": 30, "maxSize": 31 }
-        };
-        opacity = {};
-      }
-      if (this.tick == 1) {
-        type = "tick";
-        bin = false;
-        size = {};
-        opacity = {
-          "field": "Total lines changed",
-          "type": "quantitative",
-          "min": ".5"
-        };
-      }
-      if (this.tick == 2) {
-        type = "rect";
-        bin = { "maxbins": 40 };
-        size = {};
-        opacity = {
-          "field": "Total lines changed",
-          "type": "quantitative",
-          "min": ".5"
-        };
-      }
+      console.log("data", this.data);
+      if (this.data) this.values = this.data;
 
       var config = {
-        "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
-        "description": "Summarized and per year weather information for Seatle and New York.",
-        "data": { "url": "https://vega.github.io/vega-lite/data/weather.csv" },
+        "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+        "width": 950,
+        "height": 300,
 
-        "layer": [{
-          "mark": "line",
-          "encoding": {
-            "y": {
-              "aggregate": "mean",
-              "field": "wind",
-              "type": "quantitative"
-            },
-            "x": {
-              "timeUnit": "month",
-              "field": "date",
-              "type": "ordinal"
-            },
-            "detail": {
-              "timeUnit": "year",
-              "type": "temporal",
-              "field": "date"
-            },
-            "color": { "type": "nominal", "field": "location" },
-            "opacity": { "value": 0.2 }
-          }
-        }, {
-          "mark": "line",
-          "encoding": {
-            "y": {
-              "aggregate": "mean",
-              "field": "wind",
-              "type": "quantitative"
-            },
-            "x": {
-              "timeUnit": "month",
-              "field": "date",
-              "type": "ordinal"
-            },
-            "color": { "type": "nominal", "field": "location" }
-          }
-        }]
-
-      };
-
-      var repo = window.AugurAPI.Repo({ gitURL: this.repo });
-      var contributors = {};
-      var organizations = {};
-
-      var addChanges = function addChanges(dest, src) {
-        if (dest && src) {
-          if ((typeof dest === 'undefined' ? 'undefined' : _typeof(dest)) !== 'object') {
-            dest['additions'] = 0;
-            dest['deletions'] = 0;
-          }
-          dest['additions'] += src['additions'] || 0;
-          dest['deletions'] += src['deletions'] || 0;
+        "mark": "line",
+        "encoding": {
+          "x": {
+            "timeUnit": "yearmonth", "field": "date", "type": "temporal",
+            "axis": { "domain": false, "format": "%Y", "tickSize": 0 }
+          },
+          "y": {
+            "field": "value", "type": "quantitative",
+            "axis": null
+          },
+          "color": { "field": "field", "type": "nominal", "scale": { "scheme": "dark2" } }
         }
+
       };
-
-      var group = function group(obj, name, change, filter) {
-        if (filter(change)) {
-          var year = new Date(change.author_date).getFullYear();
-          var month = new Date(change.author_date).getMonth();
-          obj[change[name]] = obj[change[name]] || { additions: 0, deletions: 0 };
-          addChanges(obj[change[name]], change);
-          obj[change[name]][year] = obj[change[name]][year] || { additions: 0, deletions: 0 };
-          addChanges(obj[change[name]][year], change);
-          obj[change[name]][year + '-' + month] = obj[change[name]][year + '-' + month] || { additions: 0, deletions: 0 };
-          addChanges(obj[change[name]][year + '-' + month], change);
-        }
-      };
-
-      var flattenAndSort = function flattenAndSort(obj, keyName, sortField) {
-        return Object.keys(obj).map(function (key) {
-          var d = obj[key];
-          d[keyName] = key;
-          return d;
-        }).sort(function (a, b) {
-          return b[sortField] - a[sortField];
-        });
-      };
-
-      var filterDates = function filterDates(change) {
-        return new Date(change.author_date).getFullYear() > _this.years[0];
-      };
-
-      repo.changesByAuthor().then(function (changes) {
-        changes.forEach(function (change) {
-          change.author_date = new Date(change.author_date);
-        });
-
-        changes.forEach(function (change) {
-          if (isFinite(change.additions) && isFinite(change.deletions)) {
-            group(contributors, 'author_email', change, filterDates);
-            if (change.author_affiliation !== 'Unknown') {
-              group(organizations, 'affiliation', change, filterDates);
-            }
-          }
-        });
-
-        _this.contributors = flattenAndSort(contributors, 'author_email', 'additions');
-        var careabout = [];
-        _this.contributors.slice(0, 10).forEach(function (obj) {
-          careabout.push(obj["author_email"]);
-        });
-
-        var findObjectByKey = function findObjectByKey(array, key, value) {
-          var ary = [];
-          for (var i = 0; i < array.length; i++) {
-            if (array[i][key] == value) {
-              ary.push(array[i]);
-            }
-          }
-          return ary;
-        };
-
-        var ary = [];
-
-        careabout.forEach(function (name) {
-          findObjectByKey(changes, "author_email", name).forEach(function (obj) {
-            ary.push(obj);
-          });
-        });
-
-        _this.values = ary;
-      });
 
       $(this.$el).find('.showme, .hidefirst').removeClass('invis');
-      $(this.$el).find('.stackedbarchart').removeClass('loader');
-
-      var repos = [];
-      if (this.repo) {
-        repos.push(window.AugurRepos[this.repo]);
-      }
-
-      var processData = function processData(data) {};
+      $(this.$el).find('.spinner').removeClass('loader');
 
       return config;
     }
+  },
+  methods: {
+    renderChart: function renderChart() {}
   }
 
 };
@@ -5719,7 +5586,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('vega-lite',{attrs:{"spec":_vm.spec,"data":_vm.values}}),_vm._v(" "),_c('p',{staticStyle:{"text-align":"center"}},[_vm._v(" "+_vm._s(_vm.chart))])],1)])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{staticClass:"spinner "}),_vm._v(" "),_c('div',{staticClass:"chart hidefirst "},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v("Lines of code added by the top 10 authors visualized")]),_vm._v(" "),_c('vega-lite',{attrs:{"spec":_vm.spec,"data":_vm.values}}),_vm._v(" "),_c('p',[_vm._v(" "+_vm._s(_vm.chart)+" ")])],1)])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -5899,8 +5766,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _vuex = require('vuex');
 
 var _AugurStats = require('AugurStats');
@@ -5912,84 +5777,25 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = {
   props: ['source', 'citeUrl', 'citeText', 'title', 'disableRollingAverage', 'alwaysByDate', 'data'],
   data: function data() {
-    var years = [];
-    for (var i = 9; i >= 0; i--) {
-      years.push(new Date().getFullYear() - i);
-    }
-    var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    var monthDecimals = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     return {
       values: [],
-      contributors: [],
-      organizations: [],
-      view: 'year',
-      monthNames: monthNames,
-      monthDecimals: monthDecimals,
-      years: years,
-      setYear: 0,
-      tick: 0
+      user: null
     };
-  },
-  created: function created() {
-    this.tick = 0;
   },
 
   computed: {
     repo: function repo() {
-      return this.$store.state.gitRepo;
-    },
-    earliest: function earliest() {
-      return this.$store.state.startDate;
-    },
-    latest: function latest() {
-      return this.$store.state.endDate;
+      return this.$store.state.baseRepo;
     },
     spec: function spec() {
-      var _this = this;
-
-      var type = null,
-          bin = null,
-          size = null,
-          opacity = null;
-
-      if (this.tick == 0) {
-        type = "circle";
-        bin = false;
-        size = {
-          "field": "Total lines changed",
-          "type": "quantitative",
-          "min": "15",
-          "scale": { "minSize": 30, "maxSize": 31 }
-        };
-        opacity = {};
-      }
-      if (this.tick == 1) {
-        type = "tick";
-        bin = false;
-        size = {};
-        opacity = {
-          "field": "Total lines changed",
-          "type": "quantitative",
-          "min": ".5"
-        };
-      }
-      if (this.tick == 2) {
-        type = "rect";
-        bin = { "maxbins": 40 };
-        size = {};
-        opacity = {
-          "field": "Total lines changed",
-          "type": "quantitative",
-          "min": ".5"
-        };
-      }
+      var repo = window.AugurAPI.Repo({ githubURL: this.repo });
+      if (this.data) this.values = this.aggregateData(this.data);
 
       var config = {
         "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
         "width": 950,
         "height": 300,
 
-        "data": { "url": "https://vega.github.io/vega-lite/data/unemployment-across-industries.json" },
         "mark": "area",
         "encoding": {
           "x": {
@@ -5997,108 +5803,24 @@ exports.default = {
             "axis": { "domain": false, "format": "%Y", "tickSize": 0 }
           },
           "y": {
-            "aggregate": "sum", "field": "count", "type": "quantitative",
+            "aggregate": "sum",
+            "field": "value", "type": "quantitative",
             "axis": null,
             "stack": "center"
           },
-          "color": { "field": "series", "type": "nominal", "scale": { "scheme": "category20b" } }
+          "color": { "field": "group", "type": "nominal", "scale": { "scheme": "dark2" } }
         }
 
       };
-
-      var repo = window.AugurAPI.Repo({ gitURL: this.repo });
-      var contributors = {};
-      var organizations = {};
-
-      var addChanges = function addChanges(dest, src) {
-        if (dest && src) {
-          if ((typeof dest === 'undefined' ? 'undefined' : _typeof(dest)) !== 'object') {
-            dest['additions'] = 0;
-            dest['deletions'] = 0;
-          }
-          dest['additions'] += src['additions'] || 0;
-          dest['deletions'] += src['deletions'] || 0;
-        }
-      };
-
-      var group = function group(obj, name, change, filter) {
-        if (filter(change)) {
-          var year = new Date(change.author_date).getFullYear();
-          var month = new Date(change.author_date).getMonth();
-          obj[change[name]] = obj[change[name]] || { additions: 0, deletions: 0 };
-          addChanges(obj[change[name]], change);
-          obj[change[name]][year] = obj[change[name]][year] || { additions: 0, deletions: 0 };
-          addChanges(obj[change[name]][year], change);
-          obj[change[name]][year + '-' + month] = obj[change[name]][year + '-' + month] || { additions: 0, deletions: 0 };
-          addChanges(obj[change[name]][year + '-' + month], change);
-        }
-      };
-
-      var flattenAndSort = function flattenAndSort(obj, keyName, sortField) {
-        return Object.keys(obj).map(function (key) {
-          var d = obj[key];
-          d[keyName] = key;
-          return d;
-        }).sort(function (a, b) {
-          return b[sortField] - a[sortField];
-        });
-      };
-
-      var filterDates = function filterDates(change) {
-        return new Date(change.author_date).getFullYear() > _this.years[0];
-      };
-
-      repo.changesByAuthor().then(function (changes) {
-        changes.forEach(function (change) {
-          change.author_date = new Date(change.author_date);
-        });
-
-        changes.forEach(function (change) {
-          if (isFinite(change.additions) && isFinite(change.deletions)) {
-            group(contributors, 'author_email', change, filterDates);
-            if (change.author_affiliation !== 'Unknown') {
-              group(organizations, 'affiliation', change, filterDates);
-            }
-          }
-        });
-
-        _this.contributors = flattenAndSort(contributors, 'author_email', 'additions');
-        var careabout = [];
-        _this.contributors.slice(0, 10).forEach(function (obj) {
-          careabout.push(obj["author_email"]);
-        });
-
-        var findObjectByKey = function findObjectByKey(array, key, value) {
-          var ary = [];
-          for (var i = 0; i < array.length; i++) {
-            if (array[i][key] == value) {
-              ary.push(array[i]);
-            }
-          }
-          return ary;
-        };
-
-        var ary = [];
-
-        careabout.forEach(function (name) {
-          findObjectByKey(changes, "author_email", name).forEach(function (obj) {
-            ary.push(obj);
-          });
-        });
-
-        _this.values = ary;
-      });
 
       $(this.$el).find('.showme, .hidefirst').removeClass('invis');
-      $(this.$el).find('.stackedbarchart').removeClass('loader');
-
-      var repos = [];
-      if (this.repo) {
-        repos.push(window.AugurRepos[this.repo]);
-      }
+      $(this.$el).find('.spinner').removeClass('loader');
 
       return config;
     }
+  },
+  methods: {
+    renderChart: function renderChart() {}
   }
 
 };
@@ -6106,7 +5828,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{staticClass:"tickchart"},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v("Lines of code added by the top 10 authors visualized")]),_vm._v(" "),_c('vega-lite',{attrs:{"spec":_vm.spec,"data":_vm.values}}),_vm._v(" "),_c('p',[_vm._v(" "+_vm._s(_vm.chart)+" ")])],1)])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{staticClass:"spinner "}),_vm._v(" "),_c('div',{staticClass:"chart hidefirst "},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v("Lines of code added by the top 10 authors visualized")]),_vm._v(" "),_c('vega-lite',{attrs:{"spec":_vm.spec,"data":_vm.values}}),_vm._v(" "),_c('p',[_vm._v(" "+_vm._s(_vm.chart)+" ")])],1),_vm._v(" "),_c('div',{staticClass:"form-item form-checkboxes tickradios",staticStyle:{"transform":"translateY(-35px) !important"}},[_c('div',{staticClass:"inputGroup"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.user),expression:"user"}],attrs:{"id":"indradio","name":"comparebaseline","value":"0","type":"radio"},domProps:{"checked":_vm._q(_vm.user,"0")},on:{"change":function($event){_vm.user="0"}}}),_vm._v(" "),_c('label',{attrs:{"id":"front","for":"indradio"}},[_vm._v("Individual contributor monitoring their contributions")])]),_vm._v(" "),_c('div',{staticClass:"inputGroup "},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.user),expression:"user"}],attrs:{"id":"busradio","name":"comparebaseline","value":"1","type":"radio"},domProps:{"checked":_vm._q(_vm.user,"1")},on:{"change":function($event){_vm.user="1"}}}),_vm._v(" "),_c('label',{attrs:{"id":"front","for":"busradio"}},[_vm._v("Business looking to adopt a project")])]),_vm._v(" "),_c('div',{staticClass:"inputGroup "},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.user),expression:"user"}],attrs:{"id":"comradio","name":"comparebaseline","value":"2","type":"radio"},domProps:{"checked":_vm._q(_vm.user,"2")},on:{"change":function($event){_vm.user="2"}}}),_vm._v(" "),_c('label',{attrs:{"id":"front","for":"comradio"}},[_vm._v("Community Manager monitoring a repo")])])])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
