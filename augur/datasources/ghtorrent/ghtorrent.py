@@ -54,9 +54,9 @@ class GHTorrent(object):
         df2 = self.commit_comments(owner, repo)
         df3 = self.pull_request_comments(owner, repo)
         df4 = self.first_response_to_issue_duration(owner, repo)
-        df = pd.DataFrame({'date': df1['date'], 'issue_comments': df1['issue_comments'], 'commit_comments': None, 'pull_request_comments': None, 'opened': None, 'first_commented': None })
-        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'issue_comments': None, 'commit_comments': df2['commit_comments'], 'pull_request_comments': None, 'opened': None, 'first_commented': None })])
-        df = pd.concat([df, pd.DataFrame({'date': df3['date'], 'issue_comments': None, 'commit_comments': None, 'pull_request_comments': df3['pull_request_comments'], 'opened': None, 'first_commented': None })])
+        df = pd.DataFrame({'date': df1['date'], 'issue_comments': df1['issue_comments'], 'commit_comments': None, 'pull_request_comments': None, 'opened': None, 'first_commented': None, 'minutes_to_comment': None })
+        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'issue_comments': None, 'commit_comments': df2['commit_comments'], 'pull_request_comments': None, 'opened': None, 'first_commented': None, 'minutes_to_comment': None })])
+        df = pd.concat([df, pd.DataFrame({'date': df3['date'], 'issue_comments': None, 'commit_comments': None, 'pull_request_comments': df3['pull_request_comments'], 'opened': None, 'first_commented': None, 'minutes_to_comment': None })])
         df = pd.concat([df, pd.DataFrame({'date': None, 'issue_comments': None, 'commit_comments': None, 'pull_request_comments': None, 'opened': df4['opened'], 'first_commented': df4['first_commented'], 'minutes_to_comment': df4['minutes_to_comment']})])
         return df
 
