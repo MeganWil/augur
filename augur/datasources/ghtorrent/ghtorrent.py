@@ -40,33 +40,33 @@ class GHTorrent(object):
             repoid = max
         # returns number of commits per week
         commitsSQL = s.sql.text(self.__single_table_count_by_date('commits'))
-        df = pd.read_sql(commitsSQL, self.db, params={"repoid": str(repoid)})
-        df1 = self.closed_issues(owner, repo)
-        df2 = self.pull_requests_made_closed(owner, repo)
-        df["issues_closed"] = df1["issues_closed"]
-        df["pull_request_rate"] = df2["rate"]
+        df1 = pd.read_sql(commitsSQL, self.db, params={"repoid": str(repoid)})
+        df2 = self.closed_issues(owner, repo)
+        df3 = self.pull_requests_made_closed(owner, repo)
+        df = pd.DataFrame({'date': df1['date'], 'commits': df1['commits'], 'issues_closed': None, 'pull_request_rate': None})
+        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'commits': None, 'issues_closed': df2['issues_closed'], 'pull_request_rate': None })])
+        df = pd.concat([df, pd.DataFrame({'date': df3['date'], 'commits': None, 'issues_closed': None, 'pull_request_rate': df3['rate'] })])
         return df
 
     @annotate(tag='issue-resolution')
     def issue_resolution(self, owner, repo=None, max=None):
-        df = self.issue_comments(owner, repo)
-        df1 = self.commit_comments(owner, repo)
-        df2 = self.pull_request_comments(owner, repo)
-        df3 = self.first_response_to_issue_duration(owner, repo)
-        df['commit_comments'] = df1['commit_comments']
-        df['pull_request_comments'] = df2['pull_request_comments']
-        df['first_response_to_issue_duration'] = df3['minutes_to_comment']
+        df1 = self.issue_comments(owner, repo)
+        df2 = self.commit_comments(owner, repo)
+        df3 = self.pull_request_comments(owner, repo)
+        df4 = self.first_response_to_issue_duration(owner, repo)
+        df = pd.DataFrame({'date': df1['date'], 'issue_comments': df1['issue_comments'], 'commit_comments': None, 'pull_request_comments': None, 'opened': None, 'first_commented': None })
+        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'issue_comments': None, 'commit_comments': df2['commit_comments'], 'pull_request_comments': None, 'opened': None, 'first_commented': None })])
+        df = pd.concat([df, pd.DataFrame({'date': df3['date'], 'issue_comments': None, 'commit_comments': None, 'pull_request_comments': df3['pull_request_comments'], 'opened': None, 'first_commented': None })])
+        df = pd.concat([df, pd.DataFrame({'date': None, 'issue_comments': None, 'commit_comments': None, 'pull_request_comments': None, 'opened': df4['opened'], 'first_commented': df4['first_commented'], 'minutes_to_comment': df4['minutes_to_comment']})])
         return df
 
     @annotate(tag='community-growth')
     def community_growth(self, owner, repo=None, max=None):
         # method community_age currently broken?
-        df = self.pull_requests_open(owner, repo)
         # df1 = self.community_age(owner, repo)
-        # df[''] = df1['']
-        return df 
-
-
+        df1 = self.pull_requests_open(owner, repo)
+        df = pd.DataFrame({'date': df1['date'], 'pull_requests': df1['pull_requests_open']})
+        return df
 
 
     def __single_table_count_by_date(self, table, repo_col='project_id', user_col='author_id', group_by="week"):
