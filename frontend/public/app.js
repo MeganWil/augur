@@ -764,6 +764,8 @@ var AugurAPI = function () {
         Timeseries(repo, 'tags', 'tags');
 
         Endpoint(repo, 'codeDevelopment', 'code_development');
+        Endpoint(repo, 'issueResolution', 'issue_resolution');
+        Endpoint(repo, 'communityGrowth', 'community_growth');
       }
 
       if (repo.gitURL) {
@@ -2214,7 +2216,9 @@ module.exports = {
     return {
       values: {},
       colors: ["#FF3647", "#4736FF", "#3cb44b", "#ffe119", "#f58231", "#911eb4", "#42d4f4", "#f032e6"],
-      loaded: false
+      loaded1: false,
+      loaded2: false,
+      loaded3: false
     };
   },
 
@@ -2231,18 +2235,19 @@ module.exports = {
     var _this = this;
 
     var repo = window.AugurAPI.Repo({ githubURL: this.repo });
-    repo.codeDevelopment().then(function (data) {
+
+    repo.issueResolution().then(function (data) {
       console.log("HERE", data);
-      _this.values['codeDevelopment'] = _this.convertKey(data, 'codeDevelopment');
+      _this.values['issueResolution'] = _this.convertKey(data, 'issueResolution');
       console.log("HERE", data);
-      _this.loaded = true;
+      _this.loaded2 = true;
     });
   },
 
   methods: {
     convertKey: function convertKey(ary, group) {
       ary.forEach(function (el) {
-        el['group'] = group;
+
         var keys = Object.keys(el);
         var field = null;
         keys.forEach(function (key) {
@@ -2253,6 +2258,7 @@ module.exports = {
         });
         el['value'] = el[field];
         el['field'] = field;
+        el['group'] = group;
       });
       return ary;
     }
@@ -2262,7 +2268,7 @@ module.exports = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('section',[_c('div',{staticStyle:{"display":"inline-block"}},[_c('h2',{staticStyle:{"display":"inline-block","color":"black !important","margin-bottom":"20px"}},[_vm._v(_vm._s(_vm.$store.state.gitRepo))]),_vm._v(" "),(_vm.$store.state.comparedRepos.length > 0)?_c('h2',{staticClass:"repolisting",staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_vm._v(" compared to: ")]):_vm._e(),_vm._v(" "),_vm._l((_vm.$store.state.comparedRepos),function(repo,index){return _c('h2',{staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_c('span',{staticClass:"repolisting",style:({ 'color': _vm.colors[index] })},[_vm._v(" "+_vm._s(repo)+" ")])])})],2),_vm._v(" "),_c('div',{staticClass:"row"},[(_vm.loaded)?_c('div',{staticClass:"col col-12"},[_c('stream-chart',{attrs:{"title":"Overall Score Over Time","source":"codeDevelopment","data":_vm.values['codeDevelopment']}})],1):_vm._e(),_vm._v(" "),(_vm.loaded)?_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Code Development","group":"code","source":"codeDevelopment","data":_vm.values['codeDevelopment']}})],1):_vm._e(),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Issue Resolution","group":"issue","source":"codeDevelopment"}})],1),_vm._v(" "),_c('div',{staticClass:"col col-3"},[_c('relative-line-chart',{attrs:{"title":"Community Growth","group":"growth","source":"codeDevelopment"}})],1)])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('section',[_c('div',{staticStyle:{"display":"inline-block"}},[_c('h2',{staticStyle:{"display":"inline-block","color":"black !important","margin-bottom":"20px"}},[_vm._v(_vm._s(_vm.$store.state.gitRepo))]),_vm._v(" "),(_vm.$store.state.comparedRepos.length > 0)?_c('h2',{staticClass:"repolisting",staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_vm._v(" compared to: ")]):_vm._e(),_vm._v(" "),_vm._l((_vm.$store.state.comparedRepos),function(repo,index){return _c('h2',{staticStyle:{"display":"inline-block","margin-bottom":"20px"}},[_c('span',{staticClass:"repolisting",style:({ 'color': _vm.colors[index] })},[_vm._v(" "+_vm._s(repo)+" ")])])})],2),_vm._v(" "),_c('div',{staticClass:"row"},[(_vm.loaded)?_c('div',{staticClass:"col col-12"},[_c('stream-chart',{attrs:{"title":"Overall Score Over Time","source":"codeDevelopment","data":_vm.values}})],1):_vm._e(),_vm._v(" "),(_vm.loaded1)?_c('div',{staticClass:"col col-4"},[_c('relative-line-chart',{attrs:{"title":"Code Development","group":"code","source":"codeDevelopment","data":_vm.values['codeDevelopment']}})],1):_vm._e(),_vm._v(" "),(_vm.loaded2)?_c('div',{staticClass:"col col-4"},[_c('relative-line-chart',{attrs:{"title":"Issue Resolution","group":"issue","source":"issueResolution","data":_vm.values['issueResolution']}})],1):_vm._e(),_vm._v(" "),(_vm.loaded3)?_c('div',{staticClass:"col col-4"},[_c('relative-line-chart',{attrs:{"title":"Community Growth","group":"growth","source":"communityGrowth","data":_vm.values['communityGrowth']}})],1):_vm._e()])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -5553,7 +5559,7 @@ exports.default = {
 
       var config = {
         "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
-        "width": 950,
+        "width": 300,
         "height": 300,
 
         "mark": "line",
@@ -5788,13 +5794,21 @@ exports.default = {
       return this.$store.state.baseRepo;
     },
     spec: function spec() {
+      var _this = this;
+
       var repo = window.AugurAPI.Repo({ githubURL: this.repo });
-      if (this.data) this.values = this.aggregateData(this.data);
+      if (this.data) {
+        var data = [];
+        Object.keys(this.data).forEach(function (key) {
+          data = data.concat(_this.data[key]);
+        });
+        this.values = data;
+      }
 
       var config = {
         "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
         "width": 950,
-        "height": 300,
+        "height": 350,
 
         "mark": "area",
         "encoding": {

@@ -48,13 +48,18 @@ export default {
     },
     spec() {
       let repo = window.AugurAPI.Repo({ githubURL: this.repo })
-      if (this.data)
-        this.values = this.aggregateData(this.data)//this.convertKey(this.data)
+      if (this.data){
+        let data = []
+        Object.keys(this.data).forEach((key) => {
+          data = data.concat(this.data[key])
+        })
+        this.values = data//this.convertKey(this.data)
+      }
 
       let config = {
         "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
         "width": 950,
-        "height": 300,
+        "height": 350,
       
         // "data": {"url": "https://vega.github.io/vega-lite/data/unemployment-across-industries.json"},
         "mark": "area",

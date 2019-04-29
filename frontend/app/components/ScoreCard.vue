@@ -12,17 +12,17 @@
         <div class="col col-12" v-if="loaded">
           <stream-chart title="Overall Score Over Time"
             source="codeDevelopment"
-            :data="values['codeDevelopment']">
+            :data="values">
           </stream-chart>
         </div>
-        <div class="col col-3" v-if="loaded">
+        <div class="col col-4" v-if="loaded1">
           <relative-line-chart title="Code Development" group="code" source="codeDevelopment" :data="values['codeDevelopment']"></relative-line-chart>
         </div>
-        <div class="col col-3">
-          <relative-line-chart title="Issue Resolution" group="issue" source="codeDevelopment"></relative-line-chart>
+        <div class="col col-4" v-if="loaded2">
+          <relative-line-chart title="Issue Resolution" group="issue" source="issueResolution" :data="values['issueResolution']"></relative-line-chart>
         </div>
-        <div class="col col-3">
-          <relative-line-chart title="Community Growth" group="growth" source="codeDevelopment"></relative-line-chart>
+        <div class="col col-4" v-if="loaded3">
+          <relative-line-chart title="Community Growth" group="growth" source="communityGrowth" :data="values['communityGrowth']"></relative-line-chart>
         </div>
       </div>
     </div>
@@ -40,7 +40,9 @@ module.exports = {
     return {
       values: {},
       colors: ["#FF3647", "#4736FF","#3cb44b","#ffe119","#f58231","#911eb4","#42d4f4","#f032e6"],
-      loaded: false
+      loaded1: false,
+      loaded2: false,
+      loaded3: false
     }
   },
   computed: {
@@ -55,17 +57,29 @@ module.exports = {
   },
   created () {
     let repo = window.AugurAPI.Repo({ githubURL: this.repo })
-    repo.codeDevelopment().then((data) => {
+    // repo.codeDevelopment().then((data) => {
+    //   console.log("HERE", data)
+    //   this.values['codeDevelopment'] = this.convertKey(data, 'codeDevelopment')
+    //   console.log("HERE", data)
+    //   this.loaded1 = true
+    // })
+    repo.issueResolution().then((data) => {
       console.log("HERE", data)
-      this.values['codeDevelopment'] = this.convertKey(data, 'codeDevelopment')
+      this.values['issueResolution'] = this.convertKey(data, 'issueResolution')
       console.log("HERE", data)
-      this.loaded = true
+      this.loaded2 = true
     })
+    // repo.communityGrowth().then((data) => {
+    //   console.log("HERE", data)
+    //   this.values['communityGrowth'] = this.convertKey(data, 'communityGrowth')
+    //   console.log("HERE", data)
+    //   this.loaded2 = true
+    // })
   },
   methods: {
     convertKey(ary, group) {
       ary.forEach((el) => {
-        el['group'] = group
+        
         let keys = Object.keys(el)
         let field = null
         keys.forEach((key) => {
@@ -76,6 +90,7 @@ module.exports = {
         })
         el['value'] = el[field]
         el['field'] = field 
+        el['group'] = group
       })
       return ary
     }

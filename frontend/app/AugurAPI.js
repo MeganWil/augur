@@ -288,6 +288,8 @@ export default class AugurAPI {
 
 
       Endpoint(repo, 'codeDevelopment', 'code_development')
+      Endpoint(repo, 'issueResolution', 'issue_resolution')
+      Endpoint(repo, 'communityGrowth', 'community_growth')
     }
 
     if (repo.gitURL) {
