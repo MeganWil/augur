@@ -2,7 +2,7 @@
   <div ref="holder" style="position: relative; z-index: 5">
     <div class="spinner "></div>
     <div class="chart hidefirst ">
-      <h3 style="text-align: center">Lines of code added by the top 10 authors visualized</h3>
+      <h3 style="text-align: center">{{ title }}</h3>
       <vega-lite :spec="spec" :data="values"></vega-lite>
       <p> {{ chart }} </p>
 
@@ -41,6 +41,7 @@ export default {
       
         // "data": {"url": "https://vega.github.io/vega-lite/data/unemployment-across-industries.json"},
         "mark": "line",
+        "padding": {"left":0, "right":80, "top": 0, "bottom": 0},
         "encoding": {
           "x": {
             "timeUnit": "yearmonth", "field": "date", "type": "temporal",

@@ -34,11 +34,16 @@ class GHTorrent(object):
     # FIRST 'METRIC' - CODE DEVELOPMENT
     @annotate(tag='code-development')
     def code_development(self, owner, repo=None, max=None):
+        # find rails/rails stats on these and set variables to them in here. we use this as a score of 100, 
+        # other repo's proportion to rails/rails stats is their score
+
+        #average commits / week
+        #average commit comments / week
+        
         if max is None:
             repoid = self.repoid(owner, repo)
         else:
             repoid = max
-        # returns number of commits per week
         commitsSQL = s.sql.text(self.__single_table_count_by_date('commits'))
         df1 = pd.read_sql(commitsSQL, self.db, params={"repoid": str(repoid)})
         df2 = self.closed_issues(owner, repo)
@@ -50,20 +55,29 @@ class GHTorrent(object):
 
     @annotate(tag='issue-resolution')
     def issue_resolution(self, owner, repo=None, max=None):
+        # find rails/rails stats on these and set variables to them in here. we use this as a score of 100, 
+        # other repo's proportion to rails/rails stats is their score
+
+        #average closed issues / week
+        #average issue_comments / week
+        #average first response to issue duration (all time)
+
         df1 = self.issue_comments(owner, repo)
-        df2 = self.commit_comments(owner, repo)
         df3 = self.pull_request_comments(owner, repo)
         df4 = self.first_response_to_issue_duration(owner, repo)
-        df = pd.DataFrame({'date': df1['date'], 'issue_comments': df1['issue_comments'], 'commit_comments': None, 'pull_request_comments': None, 'opened': None, 'first_commented': None, 'minutes_to_comment': None })
-        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'issue_comments': None, 'commit_comments': df2['commit_comments'], 'pull_request_comments': None, 'opened': None, 'first_commented': None, 'minutes_to_comment': None })])
-        df = pd.concat([df, pd.DataFrame({'date': df3['date'], 'issue_comments': None, 'commit_comments': None, 'pull_request_comments': df3['pull_request_comments'], 'opened': None, 'first_commented': None, 'minutes_to_comment': None })])
-        df = pd.concat([df, pd.DataFrame({'date': None, 'issue_comments': None, 'commit_comments': None, 'pull_request_comments': None, 'opened': df4['opened'], 'first_commented': df4['first_commented'], 'minutes_to_comment': df4['minutes_to_comment']})])
+        df = pd.DataFrame({'date': df1['date'], 'issue_comments': df1['issue_comments'],'pull_request_comments': None, 'opened': None, 'first_commented': None, 'minutes_to_comment': None })
+        df = pd.concat([df, pd.DataFrame({'date': df3['date'], 'issue_comments': None,'pull_request_comments': df3['pull_request_comments'], 'opened': None, 'first_commented': None, 'minutes_to_comment': None })])
+        df = pd.concat([df, pd.DataFrame({'date': None, 'issue_comments': None, 'pull_request_comments': None, 'opened': df4['opened'], 'first_commented': df4['first_commented'], 'minutes_to_comment': df4['minutes_to_comment']})])
         return df
 
     @annotate(tag='community-growth')
     def community_growth(self, owner, repo=None, max=None):
-        # method community_age currently broken?
-        # df1 = self.community_age(owner, repo)
+        # find rails/rails stats on these and set variables to them in here. we use this as a score of 100, 
+        # other repo's proportion to rails/rails stats is their score
+
+        # average pull req closed / week
+        # avg pull req comments / week
+
         df1 = self.pull_requests_open(owner, repo)
         df = pd.DataFrame({'date': df1['date'], 'pull_requests': df1['pull_requests_open']})
         return df

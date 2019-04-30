@@ -2225,6 +2225,9 @@ module.exports = {
   computed: {
     repo: function repo() {
       return this.$store.state.baseRepo;
+    },
+    loaded: function loaded() {
+      return this.loaded1 && this.loaded2 && this.loaded3;
     }
   },
   components: {
@@ -2235,13 +2238,18 @@ module.exports = {
     var _this = this;
 
     var repo = window.AugurAPI.Repo({ githubURL: this.repo });
-
+    repo.codeDevelopment().then(function (data) {
+      console.log("HERE", data);
+      _this.values['codeDevelopment'] = _this.convertKey(data, 'codeDevelopment');
+      console.log("HERE", data);
+      _this.loaded1 = true;
+    });
     repo.issueResolution().then(function (data) {
-      console.log("HERE", data);
       _this.values['issueResolution'] = _this.convertKey(data, 'issueResolution');
-      console.log("HERE", data);
       _this.loaded2 = true;
     });
+
+    this.loaded3 = true;
   },
 
   methods: {
@@ -2252,7 +2260,6 @@ module.exports = {
         var field = null;
         keys.forEach(function (key) {
           if (el[key] != null && key != 'date') {
-            console.log(key);
             field = key;
           }
         });
@@ -5563,6 +5570,7 @@ exports.default = {
         "height": 300,
 
         "mark": "line",
+        "padding": { "left": 0, "right": 80, "top": 0, "bottom": 0 },
         "encoding": {
           "x": {
             "timeUnit": "yearmonth", "field": "date", "type": "temporal",
@@ -5592,7 +5600,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{staticClass:"spinner "}),_vm._v(" "),_c('div',{staticClass:"chart hidefirst "},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v("Lines of code added by the top 10 authors visualized")]),_vm._v(" "),_c('vega-lite',{attrs:{"spec":_vm.spec,"data":_vm.values}}),_vm._v(" "),_c('p',[_vm._v(" "+_vm._s(_vm.chart)+" ")])],1)])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{staticClass:"spinner "}),_vm._v(" "),_c('div',{staticClass:"chart hidefirst "},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('vega-lite',{attrs:{"spec":_vm.spec,"data":_vm.values}}),_vm._v(" "),_c('p',[_vm._v(" "+_vm._s(_vm.chart)+" ")])],1)])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -5842,7 +5850,7 @@ exports.default = {
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{staticClass:"spinner "}),_vm._v(" "),_c('div',{staticClass:"chart hidefirst "},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v("Lines of code added by the top 10 authors visualized")]),_vm._v(" "),_c('vega-lite',{attrs:{"spec":_vm.spec,"data":_vm.values}}),_vm._v(" "),_c('p',[_vm._v(" "+_vm._s(_vm.chart)+" ")])],1),_vm._v(" "),_c('div',{staticClass:"form-item form-checkboxes tickradios",staticStyle:{"transform":"translateY(-35px) !important"}},[_c('div',{staticClass:"inputGroup"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.user),expression:"user"}],attrs:{"id":"indradio","name":"comparebaseline","value":"0","type":"radio"},domProps:{"checked":_vm._q(_vm.user,"0")},on:{"change":function($event){_vm.user="0"}}}),_vm._v(" "),_c('label',{attrs:{"id":"front","for":"indradio"}},[_vm._v("Individual contributor monitoring their contributions")])]),_vm._v(" "),_c('div',{staticClass:"inputGroup "},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.user),expression:"user"}],attrs:{"id":"busradio","name":"comparebaseline","value":"1","type":"radio"},domProps:{"checked":_vm._q(_vm.user,"1")},on:{"change":function($event){_vm.user="1"}}}),_vm._v(" "),_c('label',{attrs:{"id":"front","for":"busradio"}},[_vm._v("Business looking to adopt a project")])]),_vm._v(" "),_c('div',{staticClass:"inputGroup "},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.user),expression:"user"}],attrs:{"id":"comradio","name":"comparebaseline","value":"2","type":"radio"},domProps:{"checked":_vm._q(_vm.user,"2")},on:{"change":function($event){_vm.user="2"}}}),_vm._v(" "),_c('label',{attrs:{"id":"front","for":"comradio"}},[_vm._v("Community Manager monitoring a repo")])])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"holder",staticStyle:{"position":"relative","z-index":"5"}},[_c('div',{staticClass:"spinner "}),_vm._v(" "),_c('div',{staticClass:"chart hidefirst "},[_c('h3',{staticStyle:{"text-align":"center"}},[_vm._v(_vm._s(_vm.title))]),_vm._v(" "),_c('vega-lite',{attrs:{"spec":_vm.spec,"data":_vm.values}}),_vm._v(" "),_c('p',[_vm._v(" "+_vm._s(_vm.chart)+" ")])],1),_vm._v(" "),_c('div',{staticClass:"form-item form-checkboxes tickradios",staticStyle:{"transform":"translateY(-35px) !important"}},[_c('div',{staticClass:"inputGroup"},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.user),expression:"user"}],attrs:{"id":"indradio","name":"comparebaseline","value":"0","type":"radio"},domProps:{"checked":_vm._q(_vm.user,"0")},on:{"change":function($event){_vm.user="0"}}}),_vm._v(" "),_c('label',{attrs:{"id":"front","for":"indradio"}},[_vm._v("Individual contributor monitoring their contributions")])]),_vm._v(" "),_c('div',{staticClass:"inputGroup "},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.user),expression:"user"}],attrs:{"id":"busradio","name":"comparebaseline","value":"1","type":"radio"},domProps:{"checked":_vm._q(_vm.user,"1")},on:{"change":function($event){_vm.user="1"}}}),_vm._v(" "),_c('label',{attrs:{"id":"front","for":"busradio"}},[_vm._v("Business looking to adopt a project")])]),_vm._v(" "),_c('div',{staticClass:"inputGroup "},[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.user),expression:"user"}],attrs:{"id":"comradio","name":"comparebaseline","value":"2","type":"radio"},domProps:{"checked":_vm._q(_vm.user,"2")},on:{"change":function($event){_vm.user="2"}}}),_vm._v(" "),_c('label',{attrs:{"id":"front","for":"comradio"}},[_vm._v("Community Manager monitoring a repo")])])])])}
 __vue__options__.staticRenderFns = []
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)

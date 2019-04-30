@@ -49,6 +49,9 @@ module.exports = {
     repo () {
       return this.$store.state.baseRepo
     },
+    loaded () {
+      return this.loaded1 && this.loaded2 && this.loaded3
+    }
   },
   components: {
     //register the charts as components (ALL USE CASES)
@@ -57,24 +60,23 @@ module.exports = {
   },
   created () {
     let repo = window.AugurAPI.Repo({ githubURL: this.repo })
-    // repo.codeDevelopment().then((data) => {
-    //   console.log("HERE", data)
-    //   this.values['codeDevelopment'] = this.convertKey(data, 'codeDevelopment')
-    //   console.log("HERE", data)
-    //   this.loaded1 = true
-    // })
+    repo.codeDevelopment().then((data) => {
+      console.log("HERE", data)
+      this.values['codeDevelopment'] = this.convertKey(data, 'codeDevelopment')
+      console.log("HERE", data)
+      this.loaded1 = true
+    })
     repo.issueResolution().then((data) => {
-      console.log("HERE", data)
       this.values['issueResolution'] = this.convertKey(data, 'issueResolution')
-      console.log("HERE", data)
       this.loaded2 = true
     })
     // repo.communityGrowth().then((data) => {
     //   console.log("HERE", data)
     //   this.values['communityGrowth'] = this.convertKey(data, 'communityGrowth')
     //   console.log("HERE", data)
-    //   this.loaded2 = true
+    //   this.loaded3 = true
     // })
+    this.loaded3 = true
   },
   methods: {
     convertKey(ary, group) {
@@ -84,7 +86,6 @@ module.exports = {
         let field = null
         keys.forEach((key) => {
           if (el[key] != null && key != 'date'){
-            console.log(key)
             field = key
           }
         })
