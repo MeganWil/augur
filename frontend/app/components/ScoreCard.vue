@@ -17,12 +17,52 @@
         </div>
         <div class="col col-4" v-if="loaded1">
           <relative-line-chart title="Code Development" group="code" source="codeDevelopment" :data="values['codeDevelopment']"></relative-line-chart>
+           
+           /*inserting buttons radio functions*/
+      <input type="radio" name="rb" id="label1" class="first" />
+      <label class="globalLabel" for="label1">Buisnesses Viewing Projects</label>
+        
+      <input type="radio" name="rb" id="label2" class="second "/>
+      <label class="globalLabel" for="label2">Community Manager Monitoring </label>
+          
+      <input  type="radio" name="rb" id="label3" class="third"/>
+      <label class="globalLabel" for="label3">Individual Contributors</label>
+        
+      /*End of Inserting button radio functions*/
+          
+          
         </div>
         <div class="col col-4" v-if="loaded2">
           <relative-line-chart title="Issue Resolution" group="issue" source="issueResolution" :data="values['issueResolution']"></relative-line-chart>
+          
+          /*Inserting button radio functions*/          
+     <input type="radio" name="rb" id="label1" class="first" />
+      <label class="globalLabel" for="label1">Buisnesses Viewing Projects</label>
+        
+      <input type="radio" name="rb" id="label2" class="second "/>
+      <label class="globalLabel" for="label2">Community Manager Monitoring </label>
+          
+      <input  type="radio" name="rb" id="label3" class="third"/>
+      <label class="globalLabel" for="label3">Individual Contributors</label>
+        
+          /*End of Inserting button radio functions*/
+          
         </div>
         <div class="col col-4" v-if="loaded3">
           <relative-line-chart title="Community Growth" group="growth" source="communityGrowth" :data="values['communityGrowth']"></relative-line-chart>
+     
+     /*inserting button radio functions*/          
+      <input type="radio" name="rb" id="label1" class="first" />
+      <label class="globalLabel" for="label1">Buisnesses Viewing Projects</label>
+        
+      <input type="radio" name="rb" id="label2" class="second "/>
+      <label class="globalLabel" for="label2">Community Manager Monitoring </label>
+          
+      <input  type="radio" name="rb" id="label3" class="third"/>
+      <label class="globalLabel" for="label3">Individual Contributors</label>
+        
+      /*End of Inserting button radio functions*/
+      
         </div>
       </div>
     </div>
