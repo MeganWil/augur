@@ -36,7 +36,6 @@ class GHTorrent(object):
     def code_development(self, owner, repo=None, max=None):
         # find rails/rails stats on these and set variables to them in here. we use this as a score of 100, 
         # other repo's proportion to rails/rails stats is their score
-
         #average commits / week
         #average commit comments / week
         
@@ -46,28 +45,27 @@ class GHTorrent(object):
             repoid = max
         commitsSQL = s.sql.text(self.__single_table_count_by_date('commits'))
         df1 = pd.read_sql(commitsSQL, self.db, params={"repoid": str(repoid)})
-        df2 = self.closed_issues(owner, repo)
-        df3 = self.pull_requests_made_closed(owner, repo)
-        df = pd.DataFrame({'date': df1['date'], 'commits': df1['commits'], 'issues_closed': None, 'pull_request_rate': None})
-        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'commits': None, 'issues_closed': df2['issues_closed'], 'pull_request_rate': None })])
-        df = pd.concat([df, pd.DataFrame({'date': df3['date'], 'commits': None, 'issues_closed': None, 'pull_request_rate': df3['rate'] })])
+        df1 = self.calculate_score(df1, 81.8607, 'commits')
+        df2 = self.commit_comments(owner, repo)
+        df2 = self.calculate_score(df2, 9.8203, 'commit_comments')
+        df = pd.DataFrame({'date': df1['date'], 'commits': df1['commits'], 'commit_comments': None})
+        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'commits': None, 'commit_comments':df2['commit_comments']})])        
         return df
 
     @annotate(tag='issue-resolution')
     def issue_resolution(self, owner, repo=None, max=None):
         # find rails/rails stats on these and set variables to them in here. we use this as a score of 100, 
         # other repo's proportion to rails/rails stats is their score
-
         #average closed issues / week
         #average issue_comments / week
         #average first response to issue duration (all time)
-
-        df1 = self.issue_comments(owner, repo)
-        df3 = self.pull_request_comments(owner, repo)
-        df4 = self.first_response_to_issue_duration(owner, repo)
-        df = pd.DataFrame({'date': df1['date'], 'issue_comments': df1['issue_comments'],'pull_request_comments': None, 'opened': None, 'first_commented': None, 'minutes_to_comment': None })
-        df = pd.concat([df, pd.DataFrame({'date': df3['date'], 'issue_comments': None,'pull_request_comments': df3['pull_request_comments'], 'opened': None, 'first_commented': None, 'minutes_to_comment': None })])
-        df = pd.concat([df, pd.DataFrame({'date': None, 'issue_comments': None, 'pull_request_comments': None, 'opened': df4['opened'], 'first_commented': df4['first_commented'], 'minutes_to_comment': df4['minutes_to_comment']})])
+        
+        df1 = self.closed_issues(owner,repo)
+        df1 = self.calculate_score(df1, 45.88, 'issues_closed')
+        df2 = self.issue_comments(owner, repo)
+        df2 = self.calculate_score(df2, 261.3211, 'issue_comments')
+        df = pd.DataFrame({'date': df1['date'], 'issues_closed': df1['issues_closed'], 'issue_comments': None})
+        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'issues_closed': None, 'issue_comments':df2['issue_comments']})]) 
         return df
 
     @annotate(tag='community-growth')
@@ -78,10 +76,23 @@ class GHTorrent(object):
         # average pull req closed / week
         # avg pull req comments / week
 
-        df1 = self.pull_requests_open(owner, repo)
-        df = pd.DataFrame({'date': df1['date'], 'pull_requests': df1['pull_requests_open']})
+        df1 = self.community_engagement(owner, repo)
+        df1 = self.calculate_score(df1, 53.0835, 'pull_requests_closed')
+        df2 = self.pull_request_comments(owner, repo)
+        df2 = self.calculate_score(df2, 98.92, 'pull_request_comments') 
+        df = pd.DataFrame({'date': df1['date'], 'pull_requests_closed': df1['pull_requests_closed'], 'pull_request_comments': None})
+        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'pull_requests_closed': None, 'pull_request_comments': df2['pull_request_comments']})])
         return df
 
+    def calculate_score(self, df, rails_score, stat):
+        for index, row in df.iterrows():
+            if(rails_score > row[stat]):
+                temp = row[stat]/rails_score * 100
+                df.set_value(index, stat, temp)
+            else:
+		#if value > rails/rails avg then score = MAX = 100
+                df.set_value(index, stat, 100)
+        return df
 
     def __single_table_count_by_date(self, table, repo_col='project_id', user_col='author_id', group_by="week"):
         """
