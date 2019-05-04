@@ -3679,6 +3679,84 @@ input:focus {
   z-index: 1 !important;
   align-content: center;
 }
+/*Inserting button styles */
+.globalLabel {
+  position: relative;
+  display: inline-block;
+  margin-right: 5px;
+  margin-bottom: 1px;
+  padding-left: 30px;
+  padding-right: 9px;
+  line-height: 36px;
+  cursor: pointer;
+}
+.globalLabel::before {
+  content: " ";
+  position: absolute;
+  top: 4px;
+  left: 0;
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  z-index: -1;
+}
+/* hides the radio button*/
+input[name="rb"] {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+/* the circles*/
+input[name="rb"].first + .globalLabel::before {
+  border-radius: 18px;
+  border: 1px solid #9d5adc;
+}
+input[name="rb"].second + .globalLabel::before {
+  border-radius: 18px;
+  border: 1px solid #e74447;
+}
+input[name="rb"].third + .globalLabel::before {
+  border-radius: 18px;
+  border: 1px solid #4180c9;
+}
+/*end of styling the circles*/
+/* Checked */
+input[name="rb"]:checked + .globalLabel {
+  padding-left: 10px;
+  color: #fff;
+}
+input[name="rb"].first:checked + .globalLabel::before {
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(157,90,220,0.6);
+  opacity: 0.8;
+  box-shadow: 0px 0 0 1px #9d5adc inset, 0 0 10px 1px #9d5adc;
+}
+input[name="rb"].second:checked + .globalLabel::before {
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(231,68,71,0.6);
+  opacity: 0.8;
+  box-shadow: 0px 0 0 1px #e74447 inset, 0 0 10px 1px #e74447;
+}
+input[name="rb"].third:checked + .globalLabel::before {
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(65,128,201,0.6);
+  opacity: 0.8;
+  box-shadow: 0px 0 0 1px #4180c9 inset, 0 0 10px 1px #4180c9;
+}
+/* Transition */
+.globalLabel,
+.globalLabel::before {
+  -webkit-transition: 0.25s all ease;
+  -o-transition: 0.25s all ease;
+  transition: 0.25s all ease;
+}
 @-moz-keyframes spin {
   0% {
     transform: rotate(0deg);

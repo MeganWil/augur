@@ -49,7 +49,7 @@ class GHTorrent(object):
         df2 = self.commit_comments(owner, repo)
         df2 = self.calculate_score(df2, 9.8203, 'commit_comments')
         df = pd.DataFrame({'date': df1['date'], 'commits': df1['commits'], 'commit_comments': None})
-        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'commits': None, 'commit_comments':df2['commit_comments']})])        
+        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'commits': None, 'commit_comments':df2['commit_comments']})])              
         return df
 
     @annotate(tag='issue-resolution')
@@ -64,15 +64,16 @@ class GHTorrent(object):
         df1 = self.calculate_score(df1, 45.88, 'issues_closed')
         df2 = self.issue_comments(owner, repo)
         df2 = self.calculate_score(df2, 261.3211, 'issue_comments')
-        df = pd.DataFrame({'date': df1['date'], 'issues_closed': df1['issues_closed'], 'issue_comments': None})
-        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'issues_closed': None, 'issue_comments':df2['issue_comments']})]) 
+        df3 = self.first_response_to_issue_duration(owner, repo)    
+        df3 = self.calculate_score(df3, 8057.332, 'minutes_to_comment')
+        df = pd.DataFrame({'date': df1['date'], 'issues_closed': df1['issues_closed'], 'issue_comments': None, 'minutes_to_comment': None})
+        df = pd.concat([df, pd.DataFrame({'date': df2['date'], 'issues_closed': None, 'issue_comments':df2['issue_comments'], 'minutes_to_comment': None})]) 
+        df = pd.concat([df, pd.DataFrame({'date': df3['opened'], 'issues_closed': None, 'issue_comments': None, 'minutes_to_comment': df3['minutes_to_comment']})])
         return df
 
     @annotate(tag='community-growth')
     def community_growth(self, owner, repo=None, max=None):
-        # find rails/rails stats on these and set variables to them in here. we use this as a score of 100, 
-        # other repo's proportion to rails/rails stats is their score
-
+        # find rails/rails stats on these and set variables to them in here. we use this as a score of 100 
         # average pull req closed / week
         # avg pull req comments / week
 
@@ -567,6 +568,7 @@ class GHTorrent(object):
         :param repo: The name of the repo. Unneeded if repository id was passed as owner.
         :return: DataFrame with new issue comments/week
         """
+
         repoid = self.repoid(owner, repo)
         issueCommentsSQL = s.sql.text(self.__sub_table_count_by_date("issues", "issue_comments", "issue_id", "issue_id", "repo_id"))
         return pd.read_sql(issueCommentsSQL, self.db, params={"repoid": str(repoid)})
