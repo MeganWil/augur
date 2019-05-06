@@ -5,6 +5,16 @@ branch | status
 master | [![Build Status](https://travis-ci.org/chaoss/augur.svg?branch=master)](https://travis-ci.org/chaoss/augur)
    dev | [![Build Status](https://travis-ci.org/chaoss/augur.svg?branch=dev)](https://travis-ci.org/chaoss/augur)
 
+## What we expect to deliver
+
+Overall, we plan to provide a comprehensive scoring system that uses metrics in 3 different groups: Code development, issue resolution, and community growth.
+
+To businesses, who are most likely looking to adopt a new project, we expect to deliver a way for them to see the consistency of a repositories score overtime.
+
+To community managers, who are most likely looking to check up on recent activity of a project they oversee, we expect to deliver a way for them to see how recent score/activity changes compare to the repo's usual activity.
+
+To individual contributors/maintainers, who are most likely looking to inspect their individual contributions, we expect to deliver a way for them to see how their contributions are impacting the repository's overall score.
+
 ## About Augur
 
 Augur is focused on prototyping open source software metrics. 
